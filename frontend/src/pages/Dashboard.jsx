@@ -6,8 +6,6 @@ import screenshot2 from '../assets/screenshot2.png';
 import screenshot3 from '../assets/screenshot3.png';
 import SangamHero from '../components/SangamHero';
 
-import bg-video from "../assets/bg-video.mp4";
-import bg-image from '../assets/sangam_background.jpg';
 
 const Dashboard = () => {
   const [loading, setloading] = useState(true);
