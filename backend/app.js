@@ -33,21 +33,19 @@ app.use(
 );
 
 // sessions (stored in MongoDB for persistence)
-app.use(
-  session({
-    name: "sid",
-    secret: process.env.MYSECRETKEY,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-    cookie: {
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-    },
-  })
-);
+app.use(session({
+  name: "sid",
+  secret: process.env.MYSECRETKEY,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
+  }
+}));
 
 // passport middleware
 app.use(passport.initialize());

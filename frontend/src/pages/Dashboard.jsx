@@ -47,7 +47,7 @@ const Dashboard = () => {
     playsInline
     className="absolute top-0 left-0 w-full h-full object-cover opacity-50 -z-10"
   >
-    <source src="/src/assets/bg-video.mp4" type="video/mp4" />
+    <source src="/assets/bg-video.mp4" type="video/mp4" />
     Your browser does not support the video tag.
   </video>
 

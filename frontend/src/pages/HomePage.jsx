@@ -63,7 +63,7 @@ const HomePage = () => {
   
   if(feeds.length==0){
     return (
-    <div className="bg-cover bg-center bg-fixed font-oswald bg-no-repeat  bg-[url(./src/assets/sangam_background.jpg)] w-full  h-screen flex flex-col">
+    <div className="bg-cover bg-center bg-fixed font-oswald bg-no-repeat  bg-[url(/assets/sangam_background.jpg)] w-full  h-screen flex flex-col">
       <Navbar />
       <div className="flex flex-col overflow-y-auto">
         <p className="md:text-2xl text-xl text-center mt-10 mb-10 ">No Post Yet...</p>
