@@ -51,7 +51,7 @@ const Like = ({ postid }) => {
   const checklikestatus=async () => {
       
     try{
-      const res =  await fetch(`http://localhost:3000/likestatus/${postid}`, {
+      const res =  await fetch(`${base_url}/likestatus/${postid}`, {
         method:"GET",
         credentials:"include"
       })
