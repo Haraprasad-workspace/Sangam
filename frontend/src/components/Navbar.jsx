@@ -19,8 +19,8 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="rounded-full border-4 border-zinc-200 p-2">
-          <Link to="/profile">
-            <img className="w-4 md:w-7" src={profileIcon} alt="Profile" />
+          <Link to="/postThought">
+            <img className="w-12 md:w-10" src={writeIcon} alt="Write" />
           </Link>
         </div>
         <div className="rounded-full border-4 border-zinc-200 p-2">
@@ -28,14 +28,14 @@ const Navbar = () => {
             <img className="w-4 md:w-7" src={logoutIcon} alt="Logout" />
           </Link>
         </div>
-        <div className="rounded-full border-4 border-zinc-200 p-2">
-          <Link to="/postThought">
-            <img className="w-12 md:w-10" src={writeIcon} alt="Write" />
-          </Link>
-        </div>
         <div className="rounded-full border-4 border-red-500 p-2">
           <Link to="/notification">
             <img className="w-4 md:w-7" src={notificationIcon} alt="Notification" />
+          </Link>
+        </div>
+        <div className="rounded-full border-4 border-zinc-200 p-2">
+          <Link to="/profile">
+            <img className="w-4 md:w-7" src={profileIcon} alt="Profile" />
           </Link>
         </div>
       </div>
