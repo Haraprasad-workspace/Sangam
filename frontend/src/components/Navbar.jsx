@@ -42,25 +42,33 @@ const Navbar = () => {
 
       {/* Mobile Navbar (Bottom Sticky) */}
       <div className="flex md:hidden fixed bottom-0 left-0 right-0 h-14 bg-white border-t border-orange-300 shadow-md justify-around items-center z-50">
+        <div className="rounded-full border-4 border-white p-2">
         <Link to="/home">
           <img className="w-6" src={homeIcon} alt="Home" />
         </Link>
+      </div>
         <div className="rounded-full border-4 border-white p-2">
           <Link to="/postThought">
             <img className="w-6" src={writeIcon} alt="Write" />
           </Link>
+        </div>
+        <div className="rounded-full border-4 border-white p-2">
         <Link to="/logout">
           <img className="w-6" src={logoutIcon} alt="Logout" />
         </Link>
-        
         </div>
+        <div className="rounded-full border-4 border-white p-2">
         <Link to="/notification">
           <img className="w-6" src={notificationIcon} alt="Notification" />
         </Link>
+        </div>
+        <div className="rounded-full border-4 border-white p-2">
         <Link to="/profile">
           <img className="w-6" src={profileIcon} alt="Profile" />
         </Link>
-      </div>
+        </div>
+    </div>
+
     </div>
   );
 };
