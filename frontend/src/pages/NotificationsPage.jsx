@@ -15,7 +15,7 @@ const NotificationList = () => {
 
   const checklogin = async () => {
   try {
-    const res = await fetch("http://localhost:3000/checkUser", {
+    const res = await fetch(`${base_url}/checkUser`, {
       method: "GET",
       credentials: "include"
     });
