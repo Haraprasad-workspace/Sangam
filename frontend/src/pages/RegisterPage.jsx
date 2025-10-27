@@ -30,7 +30,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="bg-cover bg-center bg-[url(./src/assets/sangam_background.jpg)] w-full h-screen flex font-oswald flex-col">
+    <div className="bg-cover bg-center bg-[url(/assets/sangam_background.jpg)] w-full h-screen flex font-oswald flex-col">
       <div className="Register-box flex flex-col w-fit h-auto m-auto p-5  md:p-7 rounded-md border-2">
         <p className="text-2xl md:text-3xl font-bold m-auto">Register</p>
         <div className="register-form flex flex-col p-5 mt-5">
@@ -95,7 +95,7 @@ const RegisterPage = () => {
               <p className="text-center font-bold text-xs md:text-xl mb-2">Sign Up with Google</p>
               <a href={googleauth}>
                 <img
-                  src="./src/assets/google_icon.svg"
+                  src="/assets/google_icon.svg"
                   alt="Google signup"
                   className="rounded-full w-5 md:w-8 m-auto"
                 />

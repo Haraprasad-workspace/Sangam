@@ -112,7 +112,7 @@ const Userprofile = () => {
   
   return (
 
-    <div className="bg-[url('/src/assets/sangam_background.jpg')] font-oswald bg-no-repeat bg-cover bg-fixed bg-center w-full min-h-screen flex flex-col">
+    <div className="bg-[url('/assets/sangam_background.jpg')] font-oswald bg-no-repeat bg-cover bg-fixed bg-center w-full min-h-screen flex flex-col">
   {/* Navbar */}
   <div className="w-full">
     <Navbar />

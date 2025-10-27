@@ -14,7 +14,7 @@ const HomePage = () => {
 
   const checklogin = async () => {
   try {
-    const res = await fetch(`${base_url}/checkUser `, {
+    const res = await fetch(`${base_url}/checkUser`, {
       method: "GET",
       credentials: "include"
     });
@@ -32,13 +32,8 @@ const HomePage = () => {
         method: "GET",
         credentials: "include",
       });
-
       const result = await res.json();
-      if (!res.ok) {
-        throw new Error("some problem encountered");
-      }
       setfeeds(result);
-
     } catch (err) {
       console.log(err);
     }finally{
@@ -73,7 +68,7 @@ const HomePage = () => {
   );
   }
   return (
-    <div className="bg-cover bg-center bg-fixed font-oswald bg-no-repeat  bg-[url(./src/assets/sangam_background.jpg)] w-full  h-screen flex flex-col">
+    <div className="bg-cover bg-center bg-fixed font-oswald bg-no-repeat  bg-[url(/assets/sangam_background.jpg)] w-full  h-screen flex flex-col">
       <Navbar />
       <div className="flex flex-col overflow-y-auto">
         {feeds.map((feed) => (

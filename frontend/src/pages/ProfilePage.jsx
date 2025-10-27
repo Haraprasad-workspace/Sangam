@@ -110,7 +110,7 @@ const ProfilePage = () => {
 
   return (
 
-    <div className="bg-cover bg-center bg-fixed font-oswald bg-no-repeat  bg-[url(./src/assets/sangam_background.jpg)] w-full  h-screen flex flex-col">
+    <div className="bg-cover bg-center bg-fixed font-oswald bg-no-repeat  bg-[url(/assets/sangam_background.jpg)] w-full  h-screen flex flex-col">
 
   {/* Navbar */}
     <Navbar />

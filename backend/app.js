@@ -47,6 +47,7 @@ app.use(session({
   }
 }));
 
+
 // passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
@@ -59,6 +60,14 @@ function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) return next();
   return res.status(401).json({ message: "Not authenticated" });
 }
+
+app.use((req, res, next) => {
+  console.log("🧠 Cookie received:", req.headers.cookie);
+  console.log("🧠 Session ID:", req.sessionID);
+  console.log("🧠 Session object:", req.session);
+  console.log("🧠 Authenticated:", req.isAuthenticated());
+  next();
+});
 
 // -------------------------------------------------------------------------------------------------
 // ROUTES
@@ -564,13 +573,14 @@ app.get("/getThought/:postid" , isLoggedIn , async(req,res)=>{
   }
 })
 
-app.get("/checkUser", isLoggedIn, async (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ loggedIn: false, message: "Not authenticated" });
+app.get("/checkUser", (req, res) => {
+  if (req.isAuthenticated() && req.user) {
+    return res.status(200).json({ loggedIn: true, user: req.user });
   } else {
-    return res.status(200).json({ loggedIn: true });
+    return res.status(401).json({ loggedIn: false, message: "Not authenticated" });
   }
 });
+
 
 app.get('/getfollowings/:profileid' , isLoggedIn , async(req,res)=>{
   let {profileid} = req.params;

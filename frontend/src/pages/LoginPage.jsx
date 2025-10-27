@@ -76,7 +76,7 @@ const LoginPage = () => {
               <p className="text-center font-bold mb-2">Sign in with Google</p>
               <a href={googleauth}>
                 <img
-                  src="./src/assets/google_icon.svg"
+                  src="/assets/google_icon.svg"
                   alt="Google sign in"
                   className="rounded-full w-6 md:w-8 m-auto"
                 />

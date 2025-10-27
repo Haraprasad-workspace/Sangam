@@ -71,7 +71,7 @@ const EditProfile = () => {
     return <SangamHero />;
   } else {
     return (
-      <div className="bg-cover bg-center font-oswald bg-[url(./src/assets/sangam_background.jpg)] w-full h-screen flex flex-col">
+      <div className="bg-cover bg-center font-oswald bg-[url(/assets/sangam_background.jpg)] w-full h-screen flex flex-col">
         <Navbar />
         <div className="login-box flex flex-col w-fit h-auto m-auto p-7 rounded-md border-2">
           <p className="md:text-2xl text-xl font-bold m-auto">

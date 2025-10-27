@@ -62,7 +62,7 @@ const NotificationList = () => {
   }
   if(noti.length==0){
     return (
-    <div className="bg-[url('/src/assets/sangam_background.jpg')] bg-no-repeat bg-cover font-oswald bg-fixed bg-center w-full min-h-screen flex flex-col p-1">
+    <div className="bg-[url('/assets/sangam_background.jpg')] bg-no-repeat bg-cover font-oswald bg-fixed bg-center w-full min-h-screen flex flex-col p-1">
       <Navbar/>
       <div className="mb-10 mt-5 p-3 border-2 border-orange-300 bg-white  ">
       <h2 className="text-center font-bold text-sm md:text-2xl  mb-3 md:mb-5 text-orange-600">
@@ -80,7 +80,7 @@ const NotificationList = () => {
   );
   }
   return (
-    <div className="bg-[url('/src/assets/sangam_background.jpg')] bg-no-repeat bg-cover font-oswald bg-fixed bg-center w-full min-h-screen flex flex-col p-1">
+    <div className="bg-[url('/assets/sangam_background.jpg')] bg-no-repeat bg-cover font-oswald bg-fixed bg-center w-full min-h-screen flex flex-col p-1">
       <Navbar/>
       <div className="mb-10 mt-5 p-3 border-2 border-orange-300 bg-white  ">
       <h2 className="text-center font-bold text-sm md:text-2xl  mb-3 md:mb-5 text-orange-600">
