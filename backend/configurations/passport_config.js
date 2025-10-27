@@ -2,13 +2,14 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const User = require("../models/userSchema");
 require("dotenv").config();
 
 // ---------------- LOCAL STRATEGY ----------------
 passport.use(
   new LocalStrategy(
-    { usernameField: "email" }, // by default LocalStrategy uses "username"
+    { usernameField: "email" },
     async (email, password, done) => {
       try {
         const user = await User.findOne({ email });
@@ -18,7 +19,6 @@ passport.use(
         }
 
         if (!user.password) {
-          // User signed up with Google only
           return done(null, false, { message: "Please log in with Google" });
         }
 
@@ -46,10 +46,9 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         let user = await User.findOne({ providerid: profile.id });
-
         const email = profile.emails?.[0]?.value;
 
-        // if no googleId match, but email exists -> link accounts
+        // if user not found by Google ID, try to match by email
         if (!user && email) {
           user = await User.findOne({ email });
           if (user) {
@@ -60,7 +59,7 @@ passport.use(
           }
         }
 
-        // if still no user -> create new
+        // if still no user -> create new one
         if (!user) {
           user = await User.create({
             providerid: profile.id,
@@ -78,18 +77,13 @@ passport.use(
   )
 );
 
-// ---------------- SESSION HANDLING ----------------
-passport.serializeUser((user, done) => {
-  done(null, user.id); // session will store user.id
-});
+// ---------------- JWT HELPER ----------------
+const generateToken = (user) => {
+  return jwt.sign(
+    { id: user._id, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+};
 
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findById(id).select("-password -__v");
-    done(null, user);
-  } catch (err) {
-    done(err, null);
-  }
-});
-
-module.exports = passport;
+module.exports = { passport, generateToken };

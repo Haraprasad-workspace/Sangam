@@ -1,18 +1,22 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const session = require("express-session");
-const MongoStore = require("connect-mongo");
+const cookieParser = require("cookie-parser");
 const bcrypt = require("bcrypt");
 const compression = require('compression');
 const helmet = require('helmet');
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 app.use(compression());
 app.use(helmet());
-// passport setup
-const passport = require("./configurations/passport_config");
+// JSON parser
+app.use(express.json());
+app.use(cookieParser())
 
+// passport setup
+const { passport, generateToken } = require("./configurations/passport_config");
+app.use(passport.initialize());
 // models
 const User = require("./models/userSchema");
 const Post = require("./models/postSchema");
@@ -22,52 +26,29 @@ const Notification = require("./models/notificationSchema.js");
 
 // config
 const PORT = process.env.PORT || 3000;
-const react = process.env.FRONTEND_ORIGIN;
+const FRONTEND = process.env.FRONTEND_ORIGIN;
 
 // Allow React frontend
 app.use(
   cors({
-    origin: process.env.FRONTEND_ORIGIN,
+    origin: FRONTEND,
     credentials: true,
   })
 );
 
-// sessions (stored in MongoDB for persistence)
-app.use(session({
-  name: "sid",
-  secret: process.env.MYSECRETKEY,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: {
-    maxAge: 24 * 60 * 60 * 1000,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production"?true:false,
-    sameSite:process.env.NODE_ENV === "production"?"none":"lax"
+const verifyJWT = (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ message: "No token, not authenticated" });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // attach user info to request
+    next();
+  } catch (err) {
+    console.log("JWT verification failed:", err.message);
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
-}));
-
-
-// passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
-
-// JSON parser
-app.use(express.json());
-
-// ✅ middleware to protect routes
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated()) return next();
-  return res.status(401).json({ message: "Not authenticated" });
-}
-
-app.use((req, res, next) => {
-  console.log("🧠 Cookie received:", req.headers.cookie);
-  console.log("🧠 Session ID:", req.sessionID);
-  console.log("🧠 Session object:", req.session);
-  console.log("🧠 Authenticated:", req.isAuthenticated());
-  next();
-});
+};
 
 // -------------------------------------------------------------------------------------------------
 // ROUTES
@@ -81,68 +62,67 @@ app.get(
 
 app.get(
   "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  passport.authenticate("google", { session: false, failureRedirect: "/" }),
   (req, res) => {
-    // on success, passport saves user in session
-    res.redirect(`${react}`);
+    const token = generateToken(req.user);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+    res.redirect(`${FRONTEND}/home`);
   }
 );
 
 // ---------------------- LOGOUT -----------------------
-app.post("/logout", (req, res, next) => {
-  req.logout(function (err) {
-    if (err) return next(err);
-    req.session.destroy((err) => {
-      if (err) return next(err);
-      res.clearCookie("sid");
-      res.json({ success: true, message: "Logged out successfully" });
-    });
+app.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
   });
+  res.json({ success: true, message: "Logged out successfully" });
 });
 
 // ---------------------- MANUAL LOGIN -----------------------
-app.post("/login", passport.authenticate("local") , (req, res) => {
-  // if successful, req.user is available
-  console.log(req.user);
- return res.json({
+app.post("/login", passport.authenticate("local", { session: false }), (req, res) => {
+  const token = generateToken(req.user);
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+  res.json({
     success: true,
     message: "Login successful",
     user: { id: req.user._id, email: req.user.email },
-
   });
 });
 
 // ---------------------- REGISTER -----------------------
-app.post("/register", async (req, res, next) => {
+app.post("/register", async (req, res) => {
   const { email, name, password } = req.body;
-
   try {
-    // check if user already exists
     let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ message: "Account already exists" });
-    }
+    if (user) return res.status(400).json({ message: "Account already exists" });
 
-    // hash password
     const hash = await bcrypt.hash(password, 10);
+    user = await User.create({ email, name, password: hash });
 
-    // create user
-    user = await User.create({
-      email,
-      name: name,
-      password: hash,
+    const token = generateToken(user);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // ✅ log user in immediately after registration (create session)
-    req.login(user, (err) => {
-      if (err) return next(err);
-
-      // passport stores user.id in session → frontend gets cookie
-      return res.status(200).json({
-        success: true,
-        message: "Registration successful",
-        user: { id: user._id, email: user.email },
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Registration successful",
+      user: { id: user._id, email: user.email },
     });
   } catch (error) {
     console.error(error);
@@ -152,9 +132,13 @@ app.post("/register", async (req, res, next) => {
 
 // --------------------------------------------- PROTECTED ROUTES -------------------------------------------
 
+app.get("/checkUser", verifyJWT, async (req, res) => {
+  const user = await User.findById(req.user.id).select("-password");
+  res.status(200).json({ loggedIn: true, user });
+});
 //1.) route to open profile from profile id
 
-app.get("/profile/:id", isLoggedIn, async (req, res) => {
+app.get("/profile/:id", verifyJWT, async (req, res) => {
   try {
     //first find a profile with the id from params
 
@@ -175,7 +159,7 @@ app.get("/profile/:id", isLoggedIn, async (req, res) => {
 
 //2.) this route is to load the feed from the profile id
 
-app.get("/profilefeed/:profileid", isLoggedIn, async (req, res) => {
+app.get("/profilefeed/:profileid", verifyJWT, async (req, res) => {
   try {
     let { profileid } = req.params;
 
@@ -200,7 +184,7 @@ app.get("/profilefeed/:profileid", isLoggedIn, async (req, res) => {
 
 //3.) this route is follow from the post , author id will be passed from the url as a param
 
-app.post("/follow/:authorid", isLoggedIn, async (req, res) => {
+app.post("/follow/:authorid", verifyJWT, async (req, res) => {
   //check if the user is authenticated or not
   if (!req.user) {
     return res.status(400).json({ message: "user not authenticated" });
@@ -281,7 +265,7 @@ app.post("/follow/:authorid", isLoggedIn, async (req, res) => {
 
 //4.) this route is to like a thought from a post
 
-app.post("/likeThought/:postid", isLoggedIn, async (req, res) => {
+app.post("/likeThought/:postid", verifyJWT, async (req, res) => {
   if (!req.user) {
     return res.status(400).json({ message: "user not authenticated" });
   }
@@ -344,7 +328,7 @@ app.post("/likeThought/:postid", isLoggedIn, async (req, res) => {
 
 //5.) this route is to load feed of the logged in user
 
-app.get("/loadfeed", isLoggedIn, async (req, res) => {
+app.get("/loadfeed", verifyJWT, async (req, res) => {
   if (!req.user) {
     return res.status(400).json({ message: "user not authenticated" });
   }
@@ -360,7 +344,7 @@ app.get("/loadfeed", isLoggedIn, async (req, res) => {
 });
 
 //6.) this route is to write a thought , for the logged in user
-app.post("/writeThought", isLoggedIn, async (req, res) => {
+app.post("/writeThought", verifyJWT, async (req, res) => {
   if (!req.user) {
     return res.status(401).json({ message: "Not authenticated" });
   } else {
@@ -386,7 +370,7 @@ app.post("/writeThought", isLoggedIn, async (req, res) => {
 });
 
 //7.) this route is to get the profile of the logged in user
-app.get("/getProfile", isLoggedIn, async (req, res) => {
+app.get("/getProfile", verifyJWT, async (req, res) => {
 
   try{
     let user = await User.findOne({_id:req.user.id});
@@ -402,7 +386,7 @@ app.get("/getProfile", isLoggedIn, async (req, res) => {
 });
 
 //8.) to send the status of like and no of like count on each re render
-app.get("/likestatus/:postid", isLoggedIn, async (req, res) => {
+app.get("/likestatus/:postid", verifyJWT, async (req, res) => {
   //destructuring  the params
   let { postid } = req.params;
 
@@ -442,7 +426,7 @@ app.get("/likestatus/:postid", isLoggedIn, async (req, res) => {
   }
 });
 
-app.get("/checkfollow/:authorid", isLoggedIn, async (req, res) => {
+app.get("/checkfollow/:authorid", verifyJWT, async (req, res) => {
   //check if the user is authenticated or not
   if (!req.user) {
     return res.status(400).json({ message: "user not authenticated" });
@@ -490,7 +474,7 @@ app.get("/checkfollow/:authorid", isLoggedIn, async (req, res) => {
   }
 });
 
-app.get("/countfollowers/:profileid", isLoggedIn, async (req, res) => {
+app.get("/countfollowers/:profileid", verifyJWT, async (req, res) => {
   try {
     let {profileid} = req.params;
     let user = await User.findOne({_id:profileid});
@@ -515,7 +499,7 @@ app.get("/countfollowers/:profileid", isLoggedIn, async (req, res) => {
   }
 });
 
-app.get("/getnotifications", isLoggedIn, async (req, res) => {
+app.get("/getnotifications", verifyJWT, async (req, res) => {
   if (!req.user.id) {
     return res.status(404).json({ success: false, message: "user not found" });
   }
@@ -532,7 +516,7 @@ app.get("/getnotifications", isLoggedIn, async (req, res) => {
   }
 });
 
-app.post("/updateprofile" , isLoggedIn , async(req,res)=>{
+app.post("/updateprofile" , verifyJWT , async(req,res)=>{
   try{
     let {username} = req.body;
 
@@ -551,7 +535,7 @@ app.post("/updateprofile" , isLoggedIn , async(req,res)=>{
   }
 })
 
-app.get("/getThought/:postid" , isLoggedIn , async(req,res)=>{
+app.get("/getThought/:postid" , verifyJWT , async(req,res)=>{
   let {postid} = req.params;
 
   try{
@@ -569,17 +553,7 @@ app.get("/getThought/:postid" , isLoggedIn , async(req,res)=>{
     return res.json({success:false , message:"internal server error"});
   }
 })
-
-app.get("/checkUser", (req, res) => {
-  if (req.isAuthenticated() && req.user) {
-    return res.status(200).json({ loggedIn: true, user: req.user });
-  } else {
-    return res.status(401).json({ loggedIn: false, message: "Not authenticated" });
-  }
-});
-
-
-app.get('/getfollowings/:profileid' , isLoggedIn , async(req,res)=>{
+app.get('/getfollowings/:profileid' , verifyJWT , async(req,res)=>{
   let {profileid} = req.params;
 
   try{
@@ -600,7 +574,7 @@ app.get('/getfollowings/:profileid' , isLoggedIn , async(req,res)=>{
     return res.status(500).json({success:false , message:"internal server Error "})
   }
 })
-app.get('/getfollowers/:profileid' , isLoggedIn , async(req,res)=>{
+app.get('/getfollowers/:profileid' , verifyJWT , async(req,res)=>{
   let {profileid} = req.params;
 
   try{
@@ -621,7 +595,7 @@ app.get('/getfollowers/:profileid' , isLoggedIn , async(req,res)=>{
     return res.status(500).json({success:false , message:"internal server Error "})
   }
 })
-app.get('/getlikes/:postid', isLoggedIn , async(req,res)=>{
+app.get('/getlikes/:postid', verifyJWT , async(req,res)=>{
   let {postid} = req.params;
 
   try{
