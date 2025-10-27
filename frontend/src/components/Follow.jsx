@@ -19,7 +19,7 @@ const Follow = ({ authorid }) => {
     } catch (err) {
       console.log(err);
     }finally{
-      setisSubmitting(true);
+      setisSubmitting(false);
     }
   };
 
