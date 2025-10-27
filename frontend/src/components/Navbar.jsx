@@ -45,19 +45,20 @@ const Navbar = () => {
         <Link to="/home">
           <img className="w-6" src={homeIcon} alt="Home" />
         </Link>
-        <Link to="/profile">
-          <img className="w-6" src={profileIcon} alt="Profile" />
-        </Link>
-        <Link to="/logout">
-          <img className="w-6" src={logoutIcon} alt="Logout" />
-        </Link>
         <div className="rounded-full border-4 border-white p-2">
           <Link to="/postThought">
             <img className="w-6" src={writeIcon} alt="Write" />
           </Link>
+        <Link to="/logout">
+          <img className="w-6" src={logoutIcon} alt="Logout" />
+        </Link>
+        
         </div>
         <Link to="/notification">
           <img className="w-6" src={notificationIcon} alt="Notification" />
+        </Link>
+        <Link to="/profile">
+          <img className="w-6" src={profileIcon} alt="Profile" />
         </Link>
       </div>
     </div>
