@@ -2,8 +2,13 @@ import React from "react";
 import ThoughtCard from "./ThoughtCard";
 import Like from "./Like";
 import Follow from "./Follow";
+import { useNavigate } from "react-router";
 
 const SingleFeed = ({ postid, post , author, content }) => {
+  const navigate = useNavigate();
+  const openprofile=()=>{
+    navigate(`/profile/${author._id}`)
+  }
   return (
     <div className="px-2 md:px-5 mt-2 mb-2 font-oswald">
       <div className="flex flex-col border-2 border-orange-300 mx-auto bg-white p-2 md:p-4 md:w-[500px] w-fit rounded-md">
@@ -12,7 +17,7 @@ const SingleFeed = ({ postid, post , author, content }) => {
           <div className="img">
             <img src={author.avatarurl} className="w-6 md:w-8 rounded-full" />
           </div>
-          <div>
+          <div onClick={openprofile}>
             <p className="text-sm md:text-xl font-bold text-zinc-500">
               {author.name}
             </p>
