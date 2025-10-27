@@ -40,11 +40,11 @@ app.use(session({
   saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
-  }
+  maxAge: 24 * 60 * 60 * 1000,
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+}
 }));
 
 
@@ -106,12 +106,14 @@ app.post("/logout", (req, res, next) => {
 });
 
 // ---------------------- MANUAL LOGIN -----------------------
-app.post("/login", passport.authenticate("local"), (req, res) => {
+app.post("/login", passport.authenticate("local") , (req, res) => {
   // if successful, req.user is available
-  res.json({
+  console.log(req.user);
+ return res.json({
     success: true,
     message: "Login successful",
     user: { id: req.user._id, email: req.user.email },
+
   });
 });
 
