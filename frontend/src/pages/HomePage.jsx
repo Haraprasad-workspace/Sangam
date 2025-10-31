@@ -11,7 +11,7 @@ const HomePage = () => {
   const [feeds, setfeeds] = useState([]);
   const [loading, setloading] = useState(true)
   const [isloggedin, setisloggedin] = useState(false);
-
+// route to check the login , whather the user is loggedin or not 
   const checklogin = async () => {
   try {
     const res = await fetch(`${base_url}/checkUser`, {
@@ -25,7 +25,7 @@ const HomePage = () => {
     setisloggedin(false);
   }
 };
-
+// route to load to load feed for evry user 
   const loadfeed = async () => {
     try {
       const res = await fetch(`${base_url}/loadfeed`, {
@@ -45,7 +45,7 @@ const HomePage = () => {
     checklogin(); 
     loadfeed();
   }, []);
-  
+  // if still loading then show the loading page 
   if(loading){
     return(
       <SangamHero/>
@@ -68,7 +68,7 @@ const HomePage = () => {
   );
   }
   return (
-    <div className="bg-cover bg-center bg-fixed font-oswald bg-no-repeat  bg-[url(/assets/sangam_background.jpg)] w-full  h-screen flex flex-col">
+    <div className="bg-cover bg-center bg-fixed font-oswald bg-no-repeat  bg-[url(/assets/sangam_background.jpg)] w-full  min-h-screen flex flex-col">
       <Navbar />
       <div className="flex flex-col overflow-y-auto">
         {feeds.map((feed) => (

@@ -34,7 +34,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="bg-cover bg-center bg-[url(/assets/sangam_background.jpg)] w-full  font-oswald h-screen flex flex-col">
+    <div className="bg-cover bg-center bg-[url(/assets/sangam_background.jpg)] w-full  font-oswald min-h-screen flex flex-col">
       <div className="login-box flex flex-col w-fit h-auto m-auto p-5 md:p-7 rounded-md border-2">
         <p className="text-2xl md:text-3xl font-bold m-auto">Login</p>
         <div className="login-form flex flex-col p-5 mt-5">

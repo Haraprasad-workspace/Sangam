@@ -15,6 +15,7 @@ import Dashboard from './pages/Dashboard'
 import FollowersListPage from './pages/FollowersListPage'
 import FollowingListPage from './pages/FollowingListPage'
 import LikeListPage from './pages/LikeListPage'
+import FindUser from './pages/FindUser'
 
 const router = createBrowserRouter(
   [{
@@ -76,6 +77,11 @@ const router = createBrowserRouter(
     {
       path:'/getLikes/:postid',
       element:<LikeListPage/>
+    },
+    
+    {
+      path:'/findusers',
+      element:<FindUser/>
     },
     {
       path:'/*',
