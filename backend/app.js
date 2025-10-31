@@ -668,22 +668,19 @@ app.get('/deletepost/:postid' , verifyJWT , async(req,res)=>{
   if(!post){
     return res.status(404).json({success:false});
   }
-  if (post.author._id !== req.user.id) {
+  if (post.author._id.toString() !== req.user.id) {
       return res.status(403).json({ success: false, message: "Not authorized" });
      }
 
-  await Post.deleteOne({_id:postid});
-  await Like.deleteMany({post:postid});
-  await Notification.deleteMany({post:postid});
+    await Post.deleteOne({ _id: postid });
+    await Like.deleteMany({ post: postid });
+    await Notification.deleteMany({ post: postid });
 
   return res.status(200).json({success:true , message:"post deletd"});
 }catch(err){
   console.log(err);
   return res.status(500).json({success:false , message:"internal server error "});  
-
-}
-
-  
+} 
 })
 
 
