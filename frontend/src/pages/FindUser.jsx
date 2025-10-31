@@ -1,59 +1,62 @@
-import React ,{useState , useEffect} from 'react'
-import Navbar from '../components/Navbar'
+import React , {useState , useEffect} from 'react';
+import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Profilecard from '../components/Profilecard';
-import { useParams } from "react-router-dom";
-
-
-const FollowersListPage = () => {
-
+import SangamHero from '../components/SangamHero';
+const FindUser = () => {
+ 
+    
   const base_url = import.meta.env.VITE_API_BASE;
 
-  const [followersList, setfollowersList] = useState([]);
-  const { profileid } = useParams();
+  const [userList, setuserList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const getfollowers=async()=>{
+  const getusers=async()=>{
     try{
-      let res = await fetch(`${base_url}/getfollowers/${profileid}` , {
+      let res = await fetch(`${base_url}/getusers` , {
       method:"GET",
       credentials:"include"
     })
 
     if(!res.ok){
-      throw new Error("could not able to fetch followers");
+      throw new Error("could not able to fetch users");
     }
 
     let result = await res.json();
-    setfollowersList(result.profiles);
-    console.log(followersList);
+    console.log(result);
+    setuserList(result.users);
+    console.log(userList);
 
 
   }catch(err){
       console.log(err);
+    }finally{
+        setLoading(false);
     }
 }
 
   useEffect(() => {
-    getfollowers();
+    getusers();
   }, [])
   
-  if(followersList.length==0){
+  if(loading){
+    return <SangamHero/>
+  }
+  if(userList.length==0){
     return (
 
     <div className="bg-cover bg-center bg-fixed font-oswald bg-no-repeat  bg-[url(/assets/sangam_background.jpg)] w-full  h-screen flex flex-col">
       <Navbar />
       <div className="mb-10 mt-5 p-3 border-2 border-orange-300 bg-white  ">
       <h2 className="text-center font-bold text-xl md:text-2xl  mb-3 md:mb-5 text-orange-600">
-        Followers 
+        Connect with More users
       </h2>
       <div className="flex flex-col w-auto mt-14 mb-14 md:w-[700px] m-auto  overflow-y-auto ]">
-       <p>No followers.....</p>
+       <p>No users yet.....</p>
       </div>
       
       </div>
       
-       
-
       <Footer />
     </div>
   )
@@ -65,21 +68,19 @@ const FollowersListPage = () => {
       <Navbar />
       <div className="mb-10 mt-5 p-3 border-2 border-orange-300 bg-white  ">
       <h2 className="text-center font-bold text-xl md:text-2xl  mb-3 md:mb-5 text-orange-600">
-        Followers 
+        Connect with More users
       </h2>
       <div className="flex flex-col w-auto mt-14 mb-14 md:w-[700px] m-auto  overflow-y-auto ]">
-        {followersList.map((profile) => (
-          <Profilecard key={profile._id} receiptid={profile.follower} />
+        {userList.map((profile) => (
+          <Profilecard key={profile._id} receiptid={profile._id} />
         ))}
       </div>
       
       </div>
-      
-      
-
       <Footer />
     </div>
   )
 }
 
-export default FollowersListPage
+
+export default FindUser

@@ -35,7 +35,7 @@ const LikeListPage = () => {
 
   if (likeList.length == 0) {
     return (
-      <div className="bg-cover bg-center bg-fixed font-oswald bg-no-repeat  bg-[url(./src/assets/sangam_background.jpg)] w-full  h-screen flex flex-col">
+      <div className="bg-cover bg-center bg-fixed font-oswald bg-no-repeat  bg-[url(./src/assets/sangam_background.jpg)] w-full  min-h-screen flex flex-col">
         <Navbar />
         <div className="mb-10 mt-5 p-3 border-2 border-orange-300 bg-white  ">
           <h2 className="text-center font-bold text-xl md:text-2xl  mb-3 md:mb-5 text-orange-600">

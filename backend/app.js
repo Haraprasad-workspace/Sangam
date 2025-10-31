@@ -37,11 +37,16 @@ app.use(
 );
 
 const verifyJWT = (req, res, next) => {
+  //fetch token from cookies 
   const token = req.cookies.token;
+  //if token not found then the user is not authenticated 
   if (!token) return res.status(401).json({ message: "No token, not authenticated" });
 
   try {
+  //decode the jwt token in the cookies with the help of jwt secret key
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    //assign the decoded string to req.user
+
     req.user = decoded; // attach user info to request
     next();
   } catch (err) {
@@ -103,14 +108,18 @@ app.post("/login", passport.authenticate("local", { session: false }), (req, res
 
 // ---------------------- REGISTER -----------------------
 app.post("/register", async (req, res) => {
+  //destructure the email , name , password from req.body
   const { email, name, password } = req.body;
   try {
+    //find the user based on the email
     let user = await User.findOne({ email });
+    //if user found then user already exist not need to again make an account 
     if (user) return res.status(400).json({ message: "Account already exists" });
-
+    //hash the password and store in the database
     const hash = await bcrypt.hash(password, 10);
     user = await User.create({ email, name, password: hash });
 
+    //make a jwt token based on the info provided 
     const token = generateToken(user);
     res.cookie("token", token, {
       httpOnly: true,
@@ -132,11 +141,17 @@ app.post("/register", async (req, res) => {
 
 // --------------------------------------------- PROTECTED ROUTES -------------------------------------------
 
+
+//1.) route to check whether the user is loggedin or not 
+
 app.get("/checkUser", verifyJWT, async (req, res) => {
+  //find the user by ID
   const user = await User.findById(req.user.id).select("-password");
+  //if ID not found then the user is not logged in
   res.status(200).json({ loggedIn: true, user });
 });
-//1.) route to open profile from profile id
+
+//2.) route to open profile from profile id
 
 app.get("/profile/:id", verifyJWT, async (req, res) => {
   try {
@@ -157,7 +172,7 @@ app.get("/profile/:id", verifyJWT, async (req, res) => {
   }
 });
 
-//2.) this route is to load the feed from the profile id
+//3.) this route is to load the feed from the profile id
 
 app.get("/profilefeed/:profileid", verifyJWT, async (req, res) => {
   try {
@@ -182,7 +197,7 @@ app.get("/profilefeed/:profileid", verifyJWT, async (req, res) => {
   }
 });
 
-//3.) this route is follow from the post , author id will be passed from the url as a param
+//4.) this route is follow from the post , author id will be passed from the url as a param
 
 app.post("/follow/:authorid", verifyJWT, async (req, res) => {
   //check if the user is authenticated or not
@@ -263,7 +278,7 @@ app.post("/follow/:authorid", verifyJWT, async (req, res) => {
   }
 });
 
-//4.) this route is to like a thought from a post
+//5.) this route is to like a thought from a post
 
 app.post("/likeThought/:postid", verifyJWT, async (req, res) => {
   if (!req.user) {
@@ -326,7 +341,7 @@ app.post("/likeThought/:postid", verifyJWT, async (req, res) => {
   }
 });
 
-//5.) this route is to load feed of the logged in user
+//6.) this route is to load feed of the logged in user
 
 app.get("/loadfeed", verifyJWT, async (req, res) => {
   if (!req.user) {
@@ -334,6 +349,7 @@ app.get("/loadfeed", verifyJWT, async (req, res) => {
   }
 
   try {
+    //take all the post and populate them on the author, and sort them based on time (recent one first)
     let feeds = await Post.find().populate("author").sort({ createdAt: -1 });
 
     return res.status(200).json(feeds);
@@ -343,13 +359,14 @@ app.get("/loadfeed", verifyJWT, async (req, res) => {
   }
 });
 
-//6.) this route is to write a thought , for the logged in user
+//7.) this route is to write a thought , for the logged in user
 app.post("/writeThought", verifyJWT, async (req, res) => {
   if (!req.user) {
     return res.status(401).json({ message: "Not authenticated" });
   } else {
+    //destucture the thought from the req.body
     let { thought } = req.body;
-
+    //thought not found or , thought submittted as it is then send a error
     if (!thought || thought.trim() === "") {
       return res
         .status(400)
@@ -357,6 +374,7 @@ app.post("/writeThought", verifyJWT, async (req, res) => {
     }
 
     try {
+      //create a new thought , based on the author id , which the req.id and the content provided 
       let newthought = await Post.create({
         author: req.user.id,
         content: thought,
@@ -369,7 +387,7 @@ app.post("/writeThought", verifyJWT, async (req, res) => {
   }
 });
 
-//7.) this route is to get the profile of the logged in user
+//8.) this route is to get the profile of the logged in user
 app.get("/getProfile", verifyJWT, async (req, res) => {
 
   try{
@@ -385,7 +403,7 @@ app.get("/getProfile", verifyJWT, async (req, res) => {
   }
 });
 
-//8.) to send the status of like and no of like count on each re render
+//9.) to send the status of like and no of like count on each re render
 app.get("/likestatus/:postid", verifyJWT, async (req, res) => {
   //destructuring  the params
   let { postid } = req.params;
@@ -425,6 +443,8 @@ app.get("/likestatus/:postid", verifyJWT, async (req, res) => {
       .json({ success: false, message: "internal server error " });
   }
 });
+
+//10.) to check the status based on the author id , whether user is following or not 
 
 app.get("/checkfollow/:authorid", verifyJWT, async (req, res) => {
   //check if the user is authenticated or not
@@ -474,6 +494,8 @@ app.get("/checkfollow/:authorid", verifyJWT, async (req, res) => {
   }
 });
 
+//11.) to count the followers on the basis of profile ID 
+
 app.get("/countfollowers/:profileid", verifyJWT, async (req, res) => {
   try {
     let {profileid} = req.params;
@@ -499,6 +521,7 @@ app.get("/countfollowers/:profileid", verifyJWT, async (req, res) => {
   }
 });
 
+//12.) route to get the Notifications 
 app.get("/getnotifications", verifyJWT, async (req, res) => {
   if (!req.user.id) {
     return res.status(404).json({ success: false, message: "user not found" });
@@ -516,6 +539,7 @@ app.get("/getnotifications", verifyJWT, async (req, res) => {
   }
 });
 
+//13.) route to update your profile 
 app.post("/updateprofile" , verifyJWT , async(req,res)=>{
   try{
     let {username} = req.body;
@@ -535,6 +559,7 @@ app.post("/updateprofile" , verifyJWT , async(req,res)=>{
   }
 })
 
+//14.) route to get the content of the thought based on the postid
 app.get("/getThought/:postid" , verifyJWT , async(req,res)=>{
   let {postid} = req.params;
 
@@ -553,6 +578,8 @@ app.get("/getThought/:postid" , verifyJWT , async(req,res)=>{
     return res.json({success:false , message:"internal server error"});
   }
 })
+
+//15.) route to get the folllowing of the profile based on a given profile id
 app.get('/getfollowings/:profileid' , verifyJWT , async(req,res)=>{
   let {profileid} = req.params;
 
@@ -574,6 +601,8 @@ app.get('/getfollowings/:profileid' , verifyJWT , async(req,res)=>{
     return res.status(500).json({success:false , message:"internal server Error "})
   }
 })
+
+//16.) route to get the followers of the profile based on a given profile id 
 app.get('/getfollowers/:profileid' , verifyJWT , async(req,res)=>{
   let {profileid} = req.params;
 
@@ -595,6 +624,8 @@ app.get('/getfollowers/:profileid' , verifyJWT , async(req,res)=>{
     return res.status(500).json({success:false , message:"internal server Error "})
   }
 })
+
+//17.) route to get the likes of the post , given postid as a param
 app.get('/getlikes/:postid', verifyJWT , async(req,res)=>{
   let {postid} = req.params;
 
@@ -614,6 +645,47 @@ app.get('/getlikes/:postid', verifyJWT , async(req,res)=>{
     return res.status(500).json({success:false , message:"internal server error"});
   }
 })
+
+//18.) route to get a list of users who are registered in the website 
+app.get('/getusers', verifyJWT, async (req, res) => {
+  try {
+    const users = await User.find().select('-password -__v');
+    if (users.length === 0)
+      return res.status(200).json({ success: true, users: [] });
+
+    return res.status(200).json({ success: true, users });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Internal error' });
+  }
+});
+
+//19.) route to delete the post , provided postid 
+app.get('/deletepost/:postid' , verifyJWT , async(req,res)=>{
+  try{
+    const { postid } = req.params;
+  let post = await Post.findOne({_id:postid});
+  if(!post){
+    return res.status(404).json({success:false});
+  }
+  if (post.author._id !== req.user.id) {
+      return res.status(403).json({ success: false, message: "Not authorized" });
+     }
+
+  await Post.deleteOne({_id:postid});
+  await Like.deleteMany({post:postid});
+  await Notification.deleteMany({post:postid});
+
+  return res.status(200).json({success:true , message:"post deletd"});
+}catch(err){
+  console.log(err);
+  return res.status(500).json({success:false , message:"internal server error "});  
+
+}
+
+  
+})
+
 
 // -------------------------------------------------------------------------------------------------
 

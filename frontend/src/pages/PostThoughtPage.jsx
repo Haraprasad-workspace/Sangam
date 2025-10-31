@@ -64,7 +64,7 @@ const PostThoughtPage = () => {
   }
 
   return (
-    <div className="bg-cover bg-center bg-fixed font-oswald bg-no-repeat  bg-[url(/assets/sangam_background.jpg)] w-full  h-screen flex flex-col">
+    <div className="bg-cover bg-center bg-fixed font-oswald bg-no-repeat  bg-[url(/assets/sangam_background.jpg)] w-full  min-h-screen flex flex-col">
       <Navbar />
 
       <div className="m-auto w-full max-w-lg p-6 md:p-20 rounded-2xl mb-16 mt-6 md:mt-10 max-h-fit flex flex-col border-4 bg-slate-50 border-orange-300">
@@ -98,7 +98,7 @@ const PostThoughtPage = () => {
           )}
         </div>
       </div>
-      </div>
+      </div> 
       <Footer />
     </div>
   );
