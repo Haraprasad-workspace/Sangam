@@ -196,7 +196,7 @@ const ProfilePage = () => {
         {/* Posts Grid */}
         <div className="posts grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-5 justify-center">
           {feeds.map((feed) => (
-            <div key={feed._id} className="flex flex-col items-center">
+            <div key={feed._id} className="flex flex-col p-2 items-center border-2   border-orange-500">
               <ThoughtCard content={feed.content} id={feed._id} />
               <DeletePost postid={feed._id} />
             </div>
