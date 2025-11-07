@@ -1,16 +1,24 @@
+//all the import statement
+
 import React , {useState , useEffect} from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Profilecard from '../components/Profilecard';
 import SangamHero from '../components/SangamHero';
+
+//main react rendering
+
 const FindUser = () => {
  
     
   const base_url = import.meta.env.VITE_API_BASE;
 
+
+  //state variables
   const [userList, setuserList] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  //route to get the list of users on the webiste 
   const getusers=async()=>{
     try{
       let res = await fetch(`${base_url}/getusers` , {
@@ -39,9 +47,13 @@ const FindUser = () => {
     getusers();
   }, [])
   
+  //if the page is loading , then show the loading page 
   if(loading){
     return <SangamHero/>
   }
+
+  //if no users are on the webiste then show this block 
+  
   if(userList.length==0){
     return (
 

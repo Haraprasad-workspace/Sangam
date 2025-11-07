@@ -1,3 +1,5 @@
+//all the import statements 
+
 import React,{useState , useEffect} from 'react';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
@@ -9,8 +11,13 @@ import screenshot4 from '../assets/screenshot4.png';
 import screenshot5 from '../assets/screenshot5.png';
 import screenshot6 from '../assets/screenshot6.png';
 
+
+//main react rendering 
 const Dashboard = () => {
+  //state variables 
   const [loading, setloading] = useState(true);
+
+  //list of features -1 
   const features1 = [
   {
     title: "Discover Thoughts",
@@ -28,6 +35,8 @@ const Dashboard = () => {
     img: screenshot3,
   },
 ];
+
+//list of features -2 
 const features2 = [
   {
     title: "View Likes",
@@ -46,11 +55,13 @@ const features2 = [
   },
 ];
 
+  //this is made to handle the loading process
   useEffect(() => {
     setloading(false);
   
   }, [loading]);
 
+  //if the page is loading then show the loading page 
   if(loading){
     return <SangamHero/>
   }
@@ -59,6 +70,8 @@ const features2 = [
   return (
     <div className="relative w-full min-h-screen md:h-screen font-oswald flex flex-col">
   {/* Background Video */}
+
+
   <video
     autoPlay
     loop
@@ -66,9 +79,12 @@ const features2 = [
     playsInline
     className="absolute top-0 left-0 w-full h-full object-cover opacity-50 -z-10"
   >
+
+
     <source src="/assets/bg-video.mp4" type="video/mp4" />
     Your browser does not support the video tag.
   </video>
+
 
 
   {/* Hero Section */}
@@ -80,6 +96,8 @@ const features2 = [
       Connect, share, and explore thoughts with the community.
     </p>
   </div>
+
+
 
    {/* CTA */}
   <div className="text-center bg-transparent mb-10 px-4 md:px-20">
@@ -128,6 +146,7 @@ const features2 = [
       </div>
     ))}
   </div>
+  
   <div className="flex flex-col md:flex-row gap-6 md:gap-12 justify-center  h-auto w-auto items-stretch px-4 md:px-20 mb-10">
     {features2.map((feature, index) => (
       <div

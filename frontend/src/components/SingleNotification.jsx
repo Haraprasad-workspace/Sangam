@@ -1,6 +1,8 @@
 import React , {useEffect , useState} from "react";
 import Userprofile from "../pages/Userprofile";
 import { useNavigate } from "react-router-dom";
+import like_icon from "../assets/like_icon.svg";
+import connect_icon from "../assets/connect_icon.svg";
 
 
 const SingleNotification = ({ receiptid ,receiptname , notification , type  , postid}) => {
@@ -57,7 +59,7 @@ const SingleNotification = ({ receiptid ,receiptname , notification , type  , po
         {/* Icon */}
         <div className="rounded-full p-1 md:p-2 flex-shrink-0">
           <img
-            src="./src/assets/like_icon.svg"
+            src={like_icon}
             className="w-4 h-4 md:w-6 md:h-6"
           />
         </div>
@@ -91,7 +93,7 @@ const SingleNotification = ({ receiptid ,receiptname , notification , type  , po
         {/* Icon */}
         <div className="rounded-full p-1 md:p-2 flex-shrink-0">
           <img
-            src="./src/assets/connect_icon.svg"
+            src={connect_icon}
             className="w-4 h-4 md:w-6 md:h-6"
           />
         </div>

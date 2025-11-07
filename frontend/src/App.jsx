@@ -6,7 +6,6 @@ import RegisterPage from './pages/RegisterPage'
 import NotFoundPage from './pages/NotFoundPage'
 import ProfilePage from './pages/ProfilePage'
 import NotificationsPage from './pages/NotificationsPage'
-import SettingPage from './pages/SettingPage'
 import Logout from './pages/Logout'
 import PostThoughtPage from './pages/PostThoughtPage'
 import EditProfile from './components/EditProfile'
@@ -47,9 +46,6 @@ const router = createBrowserRouter(
       element:<NotificationsPage/>
     },
     {
-      path:'/setting',
-      element:<SettingPage/>
-    },{
       path:'/logout',
       element:<Logout/>
     }

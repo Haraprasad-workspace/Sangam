@@ -2,6 +2,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import BackgroundVideo from "../components/BackgroundVideo";
 import { Navigate, useNavigate } from "react-router";
+import Swal from "sweetalert2";
+
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -26,7 +28,12 @@ const LoginPage = () => {
         navigate('/home')
       }
       else {
-        alert("error: Wrong Credentials or maybe Server Error ");
+        Swal.fire({
+         title:"Error",
+         text:"you may have entered Wrong crednetials or there may be some Internal server Error",
+         icon:"error",
+         showCloseButton:true
+        })
       }
     } catch (error) {
       console.error(error);

@@ -1,7 +1,7 @@
 import React , {useEffect , useState} from 'react'
 import SangamHero from '../components/SangamHero';
 import { useNavigate } from "react-router-dom";
-
+import Swal from "sweetalert2";
 
 const Logout = () => {
   const base_url = import.meta.env.VITE_API_BASE;
@@ -38,7 +38,13 @@ const Logout = () => {
 
   useEffect(() => {
     if(isloggedout){
-          alert("succesfully logged out ");
+          Swal.fire({
+            title:"Logged Out !!",
+            text:"you have been successfully logged Out",
+            icon:"success",
+            timer:1500,
+            showCloseButton:false
+          })
           Navigate('/');
   }
   

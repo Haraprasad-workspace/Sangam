@@ -3,18 +3,36 @@ import { useForm } from "react-hook-form";
 import SangamHero from "./SangamHero";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
+import Swal from "sweetalert2";
 
 const EditProfile = () => {
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
+
+
   const base_url = import.meta.env.VITE_API_BASE;
+ 
+ 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+
   const [profile, setprofile] = useState([]);
   const [loading, setloading] = useState(true);
   const [profileupdated, setprofileupdated] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState(profile.avatarurl||"");
+  
+  
+  const avatars = [
+  "https://www.svgrepo.com/show/29799/avatar.svg",
+  "https://www.svgrepo.com/show/29870/avatar.svg",
+  "https://www.svgrepo.com/show/17344/avatar.svg",
+  "https://www.svgrepo.com/show/30132/avatar.svg",
+  "https://www.svgrepo.com/show/153727/profile-avatar.svg"
+];
+
 
   const getProfile = async () => {
     try {
@@ -44,11 +62,12 @@ const EditProfile = () => {
 
   const onsubmit = async (data) => {
     try {
-      let res = fetch(`${base_url}/updateprofile`, {
+      const payload = { ...data, avatar: selectedAvatar };
+      let res = await fetch(`${base_url}/updateprofile`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
       setprofileupdated(true);
     } catch (err) {
@@ -61,11 +80,24 @@ const EditProfile = () => {
   }, []);
 
   useEffect(() => {
-    if (profileupdated) {
-      alert("profile Updated");
-      Navigate("/profile");
+  if (profile.avatarurl) 
+    {
+      setSelectedAvatar(profile.avatarurl);
     }
-  }, [profileupdated, Navigate]);
+}, [profile]);
+
+  useEffect(() => {
+    if (profileupdated) {
+      Swal.fire({
+        title:"Profile Updated !!",
+        text:"Your profile has been successfully updated",
+        icon:"success",
+        showConfirmButton:false,
+        timer:1200
+      })
+      navigate("/profile");
+    }
+  }, [profileupdated, navigate]);
 
   if (loading) {
     return <SangamHero />;
@@ -79,6 +111,23 @@ const EditProfile = () => {
           </p>
           <div className="login-form flex text-xs  md:text-xl flex-col p-5 mt-5">
             <form onSubmit={handleSubmit(onsubmit)}>
+              <label className="font-bold mb-2">Select Profile Avatar:</label>
+              <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mb-5">
+                {avatars.map((url) => (
+                  <img
+                    key={url}
+                    src={url}
+                    alt="avatar"
+                    className={`w-14 h-14 md:w-24 md:h-24 rounded-full cursor-pointer border-4 ${
+                      selectedAvatar === url
+                        ? "border-orange-400"
+                        : "border-transparent"
+                    }`}
+                    onClick={() => setSelectedAvatar(url)}
+                  />
+                ))}
+              </div>
+
               <label className="font-bold">Username:-</label>
               <input
                 type="text"
@@ -93,8 +142,8 @@ const EditProfile = () => {
                 })}
               />
 
-              {errors.name && (
-                <p className="text-red-500 text-xs">{errors.name.message}</p>
+              {errors.username && (
+                <p className="text-red-500 text-xs">{errors.username.message}</p>
               )}
 
               <label className="font-bold">Name:-</label>
