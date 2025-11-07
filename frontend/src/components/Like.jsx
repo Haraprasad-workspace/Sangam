@@ -4,6 +4,8 @@ import { CheckLine } from "lucide-react";
 import React, {useState , useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import likeicon from "../assets/like_icon.svg"
+import Swal from "sweetalert2";
+
 
 const Like = ({ postid }) => {
 
@@ -37,7 +39,12 @@ const Like = ({ postid }) => {
     } 
     catch (err) {
 
-      alert(err);
+      Swal.fire({
+        title:"Unable to like",
+        text:`${err}`,
+        icon:"error",
+        showCloseButton:true
+      })
       console.log(err);
     }finally{
       setisSubmitting(false);
@@ -64,7 +71,12 @@ const Like = ({ postid }) => {
       setlikecount(data.likecount);
     }
     catch(err){
-      alert(err);
+      Swal.fire({
+        title:"Unable to fetch like status",
+        text:`${err}`,
+        icon:"error",
+        showCloseButton:true
+      })
       console.log(err);
     }finally{
       setloading(false);

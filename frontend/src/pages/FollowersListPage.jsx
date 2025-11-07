@@ -1,17 +1,20 @@
+//all the import statement
 import React ,{useState , useEffect} from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer';
 import Profilecard from '../components/Profilecard';
 import { useParams } from "react-router-dom";
 
+//main react rendering 
 
 const FollowersListPage = () => {
 
   const base_url = import.meta.env.VITE_API_BASE;
-
+  //state variables 
   const [followersList, setfollowersList] = useState([]);
   const { profileid } = useParams();
 
+  //route to get the list of followers
   const getfollowers=async()=>{
     try{
       let res = await fetch(`${base_url}/getfollowers/${profileid}` , {

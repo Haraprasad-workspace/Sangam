@@ -1,7 +1,7 @@
 import React, { useEffect , useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-
+import Swal from "sweetalert2"
 
 
 const ThoughtForm = ({suggestion}) => {
@@ -24,13 +24,28 @@ const ThoughtForm = ({suggestion}) => {
       if (!res.ok) {
         throw new Error("could not write your post ");
       }else {
-        alert("Thought posted succesfully ");
+        await Swal.fire({
+          title:"Posted!!",
+          text:"Your thought has been posted successfully",
+          icon:'success',
+          timer:1200,
+          showCloseButton:false
+        })
+
         Navigate('/home');
 
       }
     } catch (err) {
+
+
       console.log(err);
-      alert(err);
+
+      Swal.fire({
+        title:"error",
+        text:`${err}`,
+        icon:"error",
+        showCloseButton:true
+      })
 
     }finally{
       setsubmitting(false);
