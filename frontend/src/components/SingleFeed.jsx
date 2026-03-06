@@ -4,7 +4,7 @@ import Like from "./Like";
 import Follow from "./Follow";
 import { useNavigate } from "react-router";
 
-const SingleFeed = ({ postid, post , author, content }) => {
+const SingleFeed = ({ postid, post , author, content , emotion , confidence }) => {
   const navigate = useNavigate();
   const openprofile=()=>{
     navigate(`/profile/${author._id}`)
@@ -34,7 +34,7 @@ const SingleFeed = ({ postid, post , author, content }) => {
 
         {/* Thought Card */}
         <div className="mt-2 mb-3 mx-auto w-full md:w-auto">
-          <ThoughtCard content={content} id={postid} />
+          <ThoughtCard content={content} id={postid} emotion={emotion} confidence={confidence}/>
           
         </div>
       </div>

@@ -7,12 +7,26 @@ import Swal from "sweetalert2"
 const ThoughtForm = ({suggestion}) => {
   const base_url = import.meta.env.VITE_API_BASE;
   const Navigate = useNavigate();
+  const ai_url = import.meta.env.VITE_AI_API ;
   const [submitting, setsubmitting] = useState(false);
   const { register, handleSubmit, formState: { errors } , setValue } = useForm();
 
   const onsubmit = async (data) => {
     setsubmitting(true);
     try {
+      const aiRes = await fetch(`${ai_url}/predict`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ thought: data.thought })
+      });
+
+      if (aiRes.ok) {
+        const aiResult = await aiRes.json();
+
+        // attach AI response to data
+        data.emotion = aiResult.emotion;
+        data.confidence = aiResult.confidence;
+      }
       const res = await fetch(`${base_url}/writeThought`, {
         method: "POST",
         credentials: "include",
@@ -61,7 +75,7 @@ const ThoughtForm = ({suggestion}) => {
   if(submitting){
     return(
       <div className="mt-4 p-2 flex flex-col items-center font-oswald">
-          submitting....
+          Evaluating the Emotion from Ai Engine...
       </div>
     )
   }

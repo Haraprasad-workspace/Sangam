@@ -401,7 +401,7 @@ app.post("/writeThought", verifyJWT, async (req, res) => {
     return res.status(401).json({ message: "Not authenticated" });
   } else {
     //destucture the thought from the req.body
-    let { thought } = req.body;
+    let { thought , emotion  , confidence } = req.body;
     //thought not found or , thought submittted as it is then send a error
     if (!thought || thought.trim() === "") {
       return res
@@ -414,6 +414,9 @@ app.post("/writeThought", verifyJWT, async (req, res) => {
       let newthought = await Post.create({
         author: req.user.id,
         content: thought,
+        emotion:emotion ,
+        confidence:confidence
+
       });
       return res.status(200).json({ success: true, message: "successful" });
     } catch (err) {

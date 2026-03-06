@@ -72,7 +72,7 @@ const HomePage = () => {
       <Navbar />
       <div className="flex flex-col overflow-y-auto">
         {feeds.map((feed) => (
-          <SingleFeed key={feed._id} postid={feed._id} post ={feed} author={feed.author} content={feed.content} />
+          <SingleFeed key={feed._id} postid={feed._id} post ={feed} author={feed.author} content={feed.content} emotion={feed.emotion} confidence={feed.confidence}/>
         ))}
         <Footer />
       </div>

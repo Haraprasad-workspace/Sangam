@@ -11,6 +11,17 @@ const PostSchema = mongoose.Schema({
         required:true,
         minlength:1,
         maxlength:500
+    },
+    emotion: {
+        type: String,
+        enum: ["sadness","joy","love","anger","fear","surprise"],
+        default:"neutral"
+    },
+
+    // NEW FIELD: prediction confidence
+    confidence: {
+        type: Number,
+        default:0
     }
 } , {timestamps:true})
 
