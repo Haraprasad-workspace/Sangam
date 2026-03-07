@@ -21,6 +21,10 @@ app.add_middleware(
 class ThoughtRequest(BaseModel):
     thought:str
 
+@app.get("/")
+def root():
+    return {"message": "API running"}
+
 @app.post("/predict")
 def predict(request:ThoughtRequest):
     result = predict_emotion(request.thought)
