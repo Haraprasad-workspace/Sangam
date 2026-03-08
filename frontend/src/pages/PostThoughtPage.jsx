@@ -3,6 +3,7 @@
 import React, { useState , useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Swal from "sweetalert2";
 import ThoughtForm from "../components/ThoughtForm";
 import thoughts from "../assets/thoughts.json";
 import NotFoundPage from "./NotFoundPage";
@@ -31,6 +32,22 @@ const PostThoughtPage = () => {
     setloading(false);
   }
 };
+
+  useEffect(() => {
+  const seen = localStorage.getItem("ai_feature_seen");
+
+  if (!seen) {
+    Swal.fire({
+      title: " New AI Feature Live!",
+      html: "Sangam can now <b>predict the emotion</b> of your thought and show the <b>confidence score</b> using AI.",
+      icon: "info",
+      confirmButtonText: "Awesome!",
+      confirmButtonColor: "#f97316",
+    });
+
+    localStorage.setItem("ai_feature_seen", "true");
+  }
+}, []);
 
   useEffect(() => {
     checklogin();
