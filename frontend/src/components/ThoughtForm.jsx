@@ -10,13 +10,16 @@ const ThoughtForm = ({suggestion}) => {
   const ai_url = import.meta.env.VITE_AI_API ;
   const [submitting, setsubmitting] = useState(false);
   const { register, handleSubmit, formState: { errors } , setValue } = useForm();
-
+  const token = import.meta.env.VITE_TOKEN
   const onsubmit = async (data) => {
     setsubmitting(true);
     try {
       const aiRes = await fetch(`${ai_url}/predict`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+           "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({ thought: data.thought })
       });
 
