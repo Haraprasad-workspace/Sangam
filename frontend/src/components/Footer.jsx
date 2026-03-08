@@ -23,7 +23,7 @@ const Footer = () => {
           <p className="text-sm">Phone: +91 9537362412</p>
           <div className="flex justify-center md:justify-start mt-3">
             <a
-              href="https://www.linkedin.com/in/haraprasad-mahapatra"
+              href="https://www.linkedin.com/in/haraprasad-mahapatra-549a1a280/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-orange-600 hover:text-orange-800 flex items-center gap-1"
@@ -37,7 +37,7 @@ const Footer = () => {
       <div className="border-t border-orange-200 py-4 text-center  md:text-xl text-xs  mb-12 md:mb-4 text-gray-600">
          <p className="text-sm"> Designed & Developed by{" "}</p>
           <a
-            href="https://www.linkedin.com/in/haraprasad-mahapatra"
+            href="https://www.linkedin.com/in/haraprasad-mahapatra-549a1a280/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-orange-600 font-semibold text-sm hover:underline"
